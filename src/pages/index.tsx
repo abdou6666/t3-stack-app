@@ -1,17 +1,14 @@
 import { SignIn, SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
 import { type NextPage } from "next";
 import Head from "next/head";
-import Link from "next/link";
-import { useEffect } from "react";
+
 
 import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  const { data } = api.posts.getAll.useQuery();
+  console.log({ data })
   const user = useUser();
-  useEffect(() => {
-    console.log({ user })
-  }, [])
 
   return (
     <>
@@ -21,16 +18,13 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-slate-500">
-        {/* <div className="bg-slate-50 w-16"> */}
         <div>
           {!user.isSignedIn && <SignIn />}
-        </div>
-
-        <div>
           {!!user.isSignedIn && <SignOutButton />}
         </div>
-        {/* </div> */}
-
+        <div>
+          {data?.map((post) => (<div key={post.id}>{post.Content}</div>))}
+        </div>
       </main>
     </>
   );
